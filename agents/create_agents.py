@@ -24,33 +24,36 @@ Each AgentCard needs:
   - skills: List of AgentSkill with id, name, description, tags, examples
 """
 
+import logging
+
 from a2a.types import (
     AgentCapabilities,
     AgentCard,
     AgentSkill,
     TransportProtocol,
 )
-from shared.agents_config import (
-    CUSTOMER_DATA_AGENT_URL,
-    SUPPORT_AGENT_URL,
-    HOST_AGENT_URL,
-)
 
 # Import agent creation functions
 from customer_data_agent.agent import create_agent as create_customer_data_agent
-from support_agent.agent import create_agent as create_support_agent
 from host_agent.agent import create_agent as create_host_agent
+from shared.agents_config import (
+    CUSTOMER_DATA_AGENT_URL,
+    HOST_AGENT_URL,
+    SUPPORT_AGENT_URL,
+)
+from support_agent.agent import create_agent as create_support_agent
 
+logger = logging.getLogger(__name__)
+# =============================================================================
+# 1: Customer Data Agent Card
+# =============================================================================
 
-# =============================================================================
-# TODO 1: Customer Data Agent Card
-# =============================================================================
 
 def create_customer_data_agent_card() -> AgentCard:
     """
     Create AgentCard for Customer Data Agent.
 
-    TODO: Return an AgentCard with:
+    Return an AgentCard with:
       - name='Customer Data Agent'
       - url=CUSTOMER_DATA_AGENT_URL
       - description describing data management capabilities
@@ -74,21 +77,51 @@ def create_customer_data_agent_card() -> AgentCard:
             ],
         )
     """
-    raise NotImplementedError(
-        "TODO: Create AgentCard for Customer Data Agent. "
-        "See the docstring above for required fields."
-    )
+    logger.info("Creating Customer Data Agent Card")
+    try:
+        card = AgentCard(
+            name="Customer Data Agent",
+            url=CUSTOMER_DATA_AGENT_URL,
+            description="Manages customer records, support tickets, and database statistics using MCP tools.",
+            version="1.0",
+            capabilities=AgentCapabilities(streaming=True),
+            default_input_modes=["text/plain"],
+            default_output_modes=["application/json"],
+            preferred_transport=TransportProtocol.jsonrpc,
+            skills=[
+                AgentSkill(
+                    id="manage_customer_data",
+                    name="Manage Customer Data",
+                    description="Access and manage customer information and support tickets.",
+                    tags=["customers", "tickets", "data", "database", "mcp"],
+                    examples=[
+                        "Get customer information for ID 5",
+                        "List all active customers",
+                        "Show me all open tickets with high priority",
+                        "Create a support ticket for customer 1",
+                        "Get customer and ticket statistics",
+                    ],
+                )
+            ],
+        )
+        logger.info("Customer Data Agent Card successfully")
+        return card
+
+    except Exception:
+        logger.exception("Failed to create Customer Data Agent Card")
+        raise
 
 
 # =============================================================================
-# TODO 2: Support Agent Card
+# 2: Support Agent Card
 # =============================================================================
+
 
 def create_support_agent_card() -> AgentCard:
     """
     Create AgentCard for Support Agent.
 
-    TODO: Return an AgentCard with:
+    Return an AgentCard with:
       - name='Support Agent'
       - url=SUPPORT_AGENT_URL
       - description describing support capabilities
@@ -112,21 +145,52 @@ def create_support_agent_card() -> AgentCard:
             ],
         )
     """
-    raise NotImplementedError(
-        "TODO: Create AgentCard for Support Agent. "
-        "See the docstring above for required fields."
-    )
+    logger.info("Creating Support Agent Card")
+    try:
+        card = AgentCard(
+            name="Support Agent",
+            url=SUPPORT_AGENT_URL,
+            description="Provides customer support, troubleshooting, and ticket assistance using safe MCP tools.",
+            version="1.0",
+            capabilities=AgentCapabilities(streaming=True),
+            default_input_modes=["text/plain"],
+            default_output_modes=["text/plain"],
+            preferred_transport=TransportProtocol.jsonrpc,
+            skills=[
+                AgentSkill(
+                    id="provide_support",
+                    name="Provide Customer Support",
+                    description="Troubleshoot customer issues and provide solutions for login, billing, performance, and data export problems.",
+                    tags=["support", "troubleshooting", "solutions", "help"],
+                    examples=[
+                        "I can't login to my account",
+                        "How do I reset my password?",
+                        "My payment failed, what should I do?",
+                        "The application is loading slowly",
+                        "I am unable to export my data",
+                    ],
+                )
+            ],
+        )
+
+        logger.info("Support Agent Card created successfully")
+        return card
+
+    except Exception:
+        logger.exception("Failed to create Support Agent Card")
+        raise
 
 
 # =============================================================================
-# TODO 3: Host Agent Card
+# 3: Host Agent Card
 # =============================================================================
+
 
 def create_host_agent_card() -> AgentCard:
     """
     Create AgentCard for Host Agent (Orchestrator).
 
-    TODO: Return an AgentCard with:
+    Return an AgentCard with:
       - name='Customer Support Host Agent'
       - url=HOST_AGENT_URL
       - description describing orchestration capabilities
@@ -149,21 +213,51 @@ def create_host_agent_card() -> AgentCard:
             ],
         )
     """
-    raise NotImplementedError(
-        "TODO: Create AgentCard for Host Agent. "
-        "See the docstring above for required fields."
-    )
+    logger.info("Creating Host Agent Card")
+
+    try:
+        card = AgentCard(
+            name="Customer Support Host Agent",
+            url=HOST_AGENT_URL,
+            description="Coordinates Customer Data and Support Agents to provide customer information, ticket management, and troubleshooting solutions.",
+            version="1.0",
+            capabilities=AgentCapabilities(streaming=True),
+            default_input_modes=["text/plain"],
+            default_output_modes=["text/plain"],
+            preferred_transport=TransportProtocol.jsonrpc,
+            skills=[
+                AgentSkill(
+                    id="comprehensive_support",
+                    name="Comprehensive Customer Support",
+                    description="Provides complete customer support by coordinating customer and ticket data lookup and troubleshooting solutions.",
+                    tags=["orchestration", "support", "data", "coordination"],
+                    examples=[
+                        "I'm having login issues, can you check my account?",
+                        "Show me my open tickets and help resolve them",
+                        "Check customer 5 and help with a billing issue",
+                    ],
+                )
+            ],
+        )
+
+        logger.info("Host Agent Card created successfully")
+        return card
+
+    except Exception:
+        logger.exception("Failed to create Host Agent Card")
+        raise
 
 
 # =============================================================================
-# TODO 4: Factory Function
+# 4: Factory Function
 # =============================================================================
+
 
 def create_all_agents():
     """
     Create all agents for the customer support system.
 
-    TODO: Create all agents and their cards, return a dictionary with:
+    Create all agents and their cards, return a dictionary with:
       {
           'customer_data': {
               'agent': <Agent from create_customer_data_agent()>,
@@ -185,7 +279,30 @@ def create_all_agents():
     Returns:
         Dictionary with all agents and their cards
     """
-    raise NotImplementedError(
-        "TODO: Create all agents and agent cards, return them in a dictionary. "
-        "See the docstring above for the expected structure."
-    )
+    logger.info("Creating all Customer Support Agents")
+
+    try:
+        agents = {
+            "customer_data": {
+                "agent": create_customer_data_agent(),
+                "card": create_customer_data_agent_card(),
+                "port": 10020,
+            },
+            "support": {
+                "agent": create_support_agent(),
+                "card": create_support_agent_card(),
+                "port": 10021,
+            },
+            "host": {
+                "agent": create_host_agent(),
+                "card": create_host_agent_card(),
+                "port": 10022,
+            },
+        }
+
+        logger.info("All Customer Support Agents created successfully")
+        return agents
+
+    except Exception:
+        logger.exception("Failed to create Customer Support Agents")
+        raise

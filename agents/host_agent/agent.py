@@ -24,9 +24,9 @@ Key concepts:
   - SequentialAgent runs sub-agents in order, passing context between them
 """
 
-import sys
-import os
 import logging
+import os
+import sys
 
 # Add parent directory to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -35,11 +35,10 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # CRITICAL: Apply A2A compatibility patch BEFORE importing RemoteA2aAgent
 # This fixes an import issue between google-adk and a2a-sdk versions.
 # =============================================================================
-from shared import a2a_compat  # noqa: F401
-
+from a2a.utils.constants import AGENT_CARD_WELL_KNOWN_PATH
 from google.adk.agents import SequentialAgent
 from google.adk.agents.remote_a2a_agent import RemoteA2aAgent
-from a2a.utils.constants import AGENT_CARD_WELL_KNOWN_PATH
+from shared import a2a_compat  # noqa: F401
 from shared.agents_config import (
     CUSTOMER_DATA_AGENT_URL,
     SUPPORT_AGENT_URL,
@@ -48,8 +47,8 @@ from shared.agents_config import (
 # Configure logging for this agent
 logging.basicConfig(
     level=logging.INFO,
-    format='[%(asctime)s] [HOST_AGENT] %(levelname)s - %(message)s',
-    datefmt='%H:%M:%S'
+    format="[%(asctime)s] [HOST_AGENT] %(levelname)s - %(message)s",
+    datefmt="%H:%M:%S",
 )
 logger = logging.getLogger(__name__)
 
@@ -58,7 +57,7 @@ def create_agent() -> SequentialAgent:
     """
     Create the Host Agent (Orchestrator).
 
-    TODO: Implement this function to:
+    Implement this function to:
 
     1. Create a RemoteA2aAgent for the Customer Data Agent:
        - name='customer_data'
@@ -95,8 +94,35 @@ def create_agent() -> SequentialAgent:
     Returns:
         Configured SequentialAgent instance
     """
-    raise NotImplementedError(
-        "TODO: Create the Host Agent with two RemoteA2aAgent sub-agents "
-        "(customer_data and support_specialist) wrapped in a SequentialAgent. "
-        "See the docstring above for the exact structure."
-    )
+    logger.info("Creating Host Agent")
+
+    try:
+        if not CUSTOMER_DATA_AGENT_URL or not SUPPORT_AGENT_URL:
+            raise ValueError("Customer Data Agent URL or Support Agent URL is missing.")
+
+        remote_customer_agent = RemoteA2aAgent(
+            name="customer_data",
+            description="Access customer and ticket data from MCP server",
+            agent_card=f"{CUSTOMER_DATA_AGENT_URL}{AGENT_CARD_WELL_KNOWN_PATH}",
+        )
+
+        remote_support_agent = RemoteA2aAgent(
+            name="support_specialist",
+            description="Provide customer support and troubleshooting solutions",
+            agent_card=f"{SUPPORT_AGENT_URL}{AGENT_CARD_WELL_KNOWN_PATH}",
+        )
+
+        host_agent = SequentialAgent(
+            name="host_agent",
+            sub_agents=[
+                remote_customer_agent,
+                remote_support_agent,
+            ],
+        )
+
+        logger.info("Host Agent created successfully")
+        return host_agent
+
+    except Exception:
+        logger.exception("Failed to create Host Agent")
+        raise

@@ -28,8 +28,8 @@ Grading (15 points; README.md has the authoritative breakdown):
   - Support toolset excludes admin/destructive tools
 """
 
-import os
 import logging
+import os
 
 from google.adk.tools.mcp_tool import McpToolset, SseConnectionParams
 from shared.agents_config import MCP_SERVER_URL
@@ -61,7 +61,7 @@ def create_full_toolset() -> McpToolset:
 
 
 # =============================================================================
-# TODO 1: Customer Data Toolset
+# 1: Customer Data Toolset
 # =============================================================================
 # Create a toolset for the Customer Data Agent with tool_filter selecting
 # data-access and management tools.
@@ -81,6 +81,7 @@ def create_full_toolset() -> McpToolset:
 #       tool_filter=[...list of tool name strings...],
 #   )
 
+
 def create_customer_data_toolset() -> McpToolset:
     """Create an McpToolset for the Customer Data Agent.
 
@@ -90,14 +91,36 @@ def create_customer_data_toolset() -> McpToolset:
     Returns:
         McpToolset: Toolset with customer data tools
     """
-    raise NotImplementedError(
-        "TODO: Return McpToolset with tool_filter selecting customer data tools. "
-        "Use SseConnectionParams(url=MCP_SSE_URL) and a tool_filter list."
+    customer_tool_names = [
+        # Customer tools (6)
+        "get_customer",
+        "list_customers",
+        "add_customer",
+        "update_customer",
+        "disable_customer",
+        "activate_customer",
+        # Ticket tools (7)
+        "get_ticket",
+        "list_tickets",
+        "create_ticket",
+        "update_ticket_status",
+        "update_ticket_priority",
+        "delete_ticket",
+        # Statistics and search tools (3)
+        "get_ticket_stats",
+        "get_customer_stats",
+        "search_tickets",
+    ]
+
+    logger.info("[MCP_TOOLSET] Creating customer toolset")
+    return McpToolset(
+        connection_params=SseConnectionParams(url=MCP_SSE_URL),
+        tool_filter=customer_tool_names,
     )
 
 
 # =============================================================================
-# TODO 2: Support Toolset
+# 2: Support Toolset
 # =============================================================================
 # Create a toolset for the Support Agent with tool_filter selecting only
 # support-appropriate tools. The support agent should NOT have access to
@@ -123,6 +146,7 @@ def create_customer_data_toolset() -> McpToolset:
 #       tool_filter=[...list of support-safe tool names...],
 #   )
 
+
 def create_support_toolset() -> McpToolset:
     """Create an McpToolset for the Support Agent.
 
@@ -133,8 +157,22 @@ def create_support_toolset() -> McpToolset:
     Returns:
         McpToolset: Toolset with support-safe tools only
     """
-    raise NotImplementedError(
-        "TODO: Return McpToolset with tool_filter selecting support-safe tools. "
-        "Exclude admin tools: disable_customer, activate_customer, delete_ticket, "
-        "add_customer, update_customer."
+    support_tool_names = [
+        "get_customer",
+        "list_customers",
+        "get_ticket",
+        "list_tickets",
+        "search_tickets",
+        "create_ticket",
+        "update_ticket_status",
+        "update_ticket_priority",
+        "get_ticket_stats",
+        "get_customer_stats",
+    ]
+
+    logger.info("[MCP_TOOLSET] Creating support toolset")
+
+    return McpToolset(
+        connection_params=SseConnectionParams(url=MCP_SSE_URL),
+        tool_filter=support_tool_names,
     )
