@@ -37,8 +37,11 @@ from a2a.types import (
 from customer_data_agent.agent import create_agent as create_customer_data_agent
 from host_agent.agent import create_agent as create_host_agent
 from shared.agents_config import (
+    CUSTOMER_DATA_AGENT_PORT,
     CUSTOMER_DATA_AGENT_URL,
+    HOST_AGENT_PORT,
     HOST_AGENT_URL,
+    SUPPORT_AGENT_PORT,
     SUPPORT_AGENT_URL,
 )
 from support_agent.agent import create_agent as create_support_agent
@@ -104,7 +107,7 @@ def create_customer_data_agent_card() -> AgentCard:
                 )
             ],
         )
-        logger.info("Customer Data Agent Card successfully")
+        logger.info("Customer Data Agent Card created successfully")
         return card
 
     except Exception:
@@ -286,17 +289,17 @@ def create_all_agents():
             "customer_data": {
                 "agent": create_customer_data_agent(),
                 "card": create_customer_data_agent_card(),
-                "port": 10020,
+                "port": CUSTOMER_DATA_AGENT_PORT,
             },
             "support": {
                 "agent": create_support_agent(),
                 "card": create_support_agent_card(),
-                "port": 10021,
+                "port": SUPPORT_AGENT_PORT,
             },
             "host": {
                 "agent": create_host_agent(),
                 "card": create_host_agent_card(),
-                "port": 10022,
+                "port": HOST_AGENT_PORT,
             },
         }
 

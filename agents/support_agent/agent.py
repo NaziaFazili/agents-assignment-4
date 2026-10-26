@@ -158,6 +158,13 @@ def create_agent() -> Agent:
     """
 
     try:
+        if not GEMINI_MODEL:
+            logger.error(
+                "Initialization Failed: The shared variable GEMINI_MODEL is empty or invalid."
+            )
+            raise ValueError(
+                "GEMINI MODEL environment variable must contain a valid model name string."
+            )
         support_tools = create_support_toolset()
 
         agent = Agent(

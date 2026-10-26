@@ -88,7 +88,8 @@ def create_agent() -> Agent:
     - List and filter support tickets by ID, status or priority.
     - Create new support tickets.
     - Update existing support tickets by status or priority.
-    - Delete support tickets when explicitly requested and authorized.
+    - Delete support tickets when explicitly requested.
+    - For destructive operations such as deleting tickets or disabling customers, confirm the user's intent before performing the action.
     - Retrieve customer and support ticket statistics.
     - Search tickets by keyword
 
@@ -111,8 +112,6 @@ def create_agent() -> Agent:
     try:
         logger.info("Initializing Customer Data MCP toolset")
 
-        toolset = create_customer_data_toolset()
-
         if not GEMINI_MODEL:
             logger.error(
                 "Initialization Failed: The shared variable GEMINI_MODEL is empty or invalid."
@@ -120,6 +119,7 @@ def create_agent() -> Agent:
             raise ValueError(
                 "GEMINI MODEL environment variable must contain a valid model name string."
             )
+        toolset = create_customer_data_toolset()
 
         agent = Agent(
             model=GEMINI_MODEL,
