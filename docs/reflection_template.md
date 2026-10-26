@@ -53,21 +53,26 @@ RemoteA2aAgent lets one agant to communicate with another agent over a network u
 
 ### Technical Challenges
 - What was the most difficult part of the implementation?
-The most difficult part was understanding how all the agents, MCP tools, and A2A connections work together. I also struggled with understanding the code structure and which modules run first. 
+The most difficult part was understanding how all the agents, MCP tools, and A2A connections work together. 
 
 - How did you debug agent communication issues?
+I debugged agent communication issues by checking the logs and error messages to see where the problem was happening. I tested the MCP server and individual agents separately before testing the complete workflow. I also used ADK Web to check whether the agents were communicating correctly.
 
 ### Architecture Decisions
 - Why is the SequentialAgent pattern appropriate for this use case?
+The SequentialAgent pattern works well for this application because the agents need to run in a specific order. The Customer Data Agent runs first to collect customer and ticket information. Then the Support Agent uses that information to understand the issue and provide solutions. This makes the workflow simple, organized, and easier to test and debug.
 - What are the trade-offs vs. direct agent calls?
-
+Using SequentialAgent makes the workflow easier to organize because agents run in a fixed order. It also makes testing and debugging easier. However, it can be slower because both agents run even when one is not needed. Direct agent calls can be faster and give more control
 ---
 
 ## Bonus: Routing Modes (if attempted)
 
 ### Advanced Router
 - How does the dynamic routing decide which agents to call?
+Dynamic routing checks the customer's request for keywords and decides whether to run the Data Agent, Support Agent, or both. The decision is saved in session state. Callbacks then run or skip each agent based on that decision. For example, if a customer asks how to reset a password, only the Support Agent runs. If they ask to check their account and fix a login issue, both agents run.
+
 - What callback patterns did you use?
+I used before_agent_callback to control which agents run. The Router saves the routing decision, and the callbacks check that decision to either run or skip the Customer Data and Support Agents.
 
 ### Parallel Router
 - How does parallel execution improve latency?
@@ -86,10 +91,13 @@ Report measured wall-clock latency (seconds) for the same query in each mode, an
 ---
 
 ## Key Learnings
-1.
-2.
-3.
+1. Learned how multiple agents work together.
+2. Learned how agents communicate using A2A.
+3. Learned how agents use MCP tools to access data.
+4. Learned how to limit tool access for each agent.
+5. Learned how SequentialAgent runs agents in order.
+6. Learned how dynamic routing selects which agents to run.
 
 ## Ideas for Improvement
--
+- Make it easier to track how agents communicate.
 -
