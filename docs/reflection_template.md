@@ -8,9 +8,11 @@
 
 ### Toolset Design Decisions
 - Which MCP tools did you include in each `tool_filter`, and why?
+
 The Customer Data Agent has access to all 15 MCP tools because it manages customer records and support tickets. Hence it's tool_filter includes all MCP tools. The Support Agent uses a restricted tool_filter that excludes five sensitive operations: adding or updating customers, activating or disabling accounts, and deleting tickets. This makes the system safer by allowing the Support Agent to use only the tools it needs to help customers.
 
 - How does the support toolset's filter limit what the support agent can do?
+
 The support toolset's tool_filter limits which MCP tools the Support Agent can access. It blocks sensitive actions like adding or updating customers, activating or disabling accounts, and deleting tickets. The Support Agent can still look up customer information, troubleshoot problems, and create or update support tickets.
 
 ### Data Agent Instruction
