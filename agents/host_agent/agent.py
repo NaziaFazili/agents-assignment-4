@@ -55,44 +55,15 @@ logger = logging.getLogger(__name__)
 
 def create_agent() -> SequentialAgent:
     """
-    Create the Host Agent (Orchestrator).
+    Create the Host Agent to coordinate Customer Data and Support Agents.
 
-    Implement this function to:
+    Uses RemoteA2aAgent to connect to both agents through A2A.
+    The SequentialAgent runs the Customer Data Agent first, followed by the Support Agent.
 
-    1. Create a RemoteA2aAgent for the Customer Data Agent:
-       - name='customer_data'
-       - description='Access customer and ticket data from MCP server'
-       - agent_card=f'{CUSTOMER_DATA_AGENT_URL}{AGENT_CARD_WELL_KNOWN_PATH}'
-
-    2. Create a RemoteA2aAgent for the Support Agent:
-       - name='support_specialist'
-       - description='Provide customer support and troubleshooting solutions'
-       - agent_card=f'{SUPPORT_AGENT_URL}{AGENT_CARD_WELL_KNOWN_PATH}'
-
-    3. Create and return a SequentialAgent:
-       - name='customer_support_host'
-       - sub_agents=[remote_customer_data, remote_support]
-
-    Example:
-        remote_customer_data = RemoteA2aAgent(
-            name='customer_data',
-            description='Access customer and ticket data from MCP server',
-            agent_card=f'{CUSTOMER_DATA_AGENT_URL}{AGENT_CARD_WELL_KNOWN_PATH}',
-        )
-
-        remote_support = RemoteA2aAgent(
-            name='support_specialist',
-            description='Provide customer support and troubleshooting solutions',
-            agent_card=f'{SUPPORT_AGENT_URL}{AGENT_CARD_WELL_KNOWN_PATH}',
-        )
-
-        return SequentialAgent(
-            name='customer_support_host',
-            sub_agents=[remote_customer_data, remote_support],
-        )
+    Validates agent URLs and logs any errors during creation.
 
     Returns:
-        Configured SequentialAgent instance
+        SequentialAgent: Configured Host Agent with both remote agents.
     """
     logger.info("Creating Host Agent")
 

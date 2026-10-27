@@ -22,6 +22,7 @@ Requirements for bonus points:
 
 import logging
 import os
+import re
 import sys
 from typing import Optional
 
@@ -102,13 +103,17 @@ def analyze_query_intent(query: str) -> dict:
         "billing",
         "payment",
         "troubleshoot",
+        "charged",
+        "refund",
+        "invoice",
+        "declined",
     )
 
     high_urgency = ("urgent", "immediately", "asap", "critical")
     medium_urgency = ("soon", "important", "priority")
 
-    needs_data = any(word in query for word in data_keywords)
-    needs_support = any(word in query for word in support_keywords)
+    needs_data = any(re.search(rf"\b{word}", query) for word in data_keywords)
+    needs_support = any(re.search(rf"\b{word}", query) for word in support_keywords)
 
     # If query matches neither list, the code defaults to using both agents.
     if not needs_data and not needs_support:
@@ -224,6 +229,13 @@ def create_router_instruction(readonly_context) -> str:
 
 
 def before_router_agent(callback_context: CallbackContext) -> Optional[types.Content]:
+    """
+    Analyze the user's request and save the routing decision in session state.
+    Determines which agents should run based on the query.
+    The saved decision is used by the agent callbacks to run or skip agents.
+
+    Returns: None, so the router agent always runs.
+    """
 
     content = callback_context.user_content
 
